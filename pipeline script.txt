@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'python-flask-app'
+        DOCKER_USERNAME = 'anandandy411'
     }
 
     stages {
@@ -36,6 +37,17 @@ pipeline {
             steps {
                 script {
                     sh 'docker image prune -f'
+                }
+            }
+        }
+        stage('push to dockerhub'){
+            steps{
+                script{
+                    withCredentials([gitUsernamePassword(credentialsId: 'dockerhub-credentials', gitToolName: 'Default')]) {
+                        sh 'docker tag $IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:latest'
+                        sh 'docker push $DOCKER_USERNAME/$IMAGE_NAME:latest'
+                    }
+                    
                 }
             }
         }
